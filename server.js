@@ -165,7 +165,7 @@ function getIcon(userid, source_domain, target, next) {
 
 
 // Send the forwarded message as a POST to the target Slack instance
-function sendPost(email_hash, username, text, target) {
+function sendPost(icon_url, username, text, target) {
   var options = {
     uri: target,
     method: 'POST',
@@ -173,7 +173,7 @@ function sendPost(email_hash, username, text, target) {
     body: {
       'username' : username,
       'text' : text,
-      'icon_url' : 'http://www.gravatar.com/avatar/' + email_hash
+      'icon_url' : icon_url
     }
   };
 
