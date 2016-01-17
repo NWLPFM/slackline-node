@@ -55,7 +55,7 @@ router.all('/bridge', function(req, res) {
   } else {
     getHash(userid, source_domain, target, function(err, email_hash) {
       console.log("Got hash of user", userid, 'from', source_domain, 'hash is', email_hash);
-      fixMentions(text, target, function(err, cleanText) {
+      fixMentions(text, source_domain, target, function(err, cleanText) {
         console.log("Fixed mentions on", text, "to", cleanText);
         sendPost(email_hash, username, cleanText, target);
       });
@@ -83,7 +83,7 @@ console.log('slackline is running on port ' + port);
 var mentionMap = {};
 
 // takes a raw Slack message as an input, returns a cleaned string with any @ mentions converted to the relevant usernames
-function fixMentions(text, target, next){
+function fixMentions(text, source, target, next){
   var strText = text;
   var userPattern = /<@([^>]+)>/igm;
   var userArray = strText.match(userPattern);
@@ -101,11 +101,8 @@ function fixMentions(text, target, next){
       } else {
         var strUserid = strUseridRaw.substring(2, strUseridRaw.length -1);
 
-        // get the sender's domain from settings.js
-        var referrer = settings.domainReferrer[target];
-
         // use the sender's domain and userid to grab their user info from the Slack API
-        var url = 'https://slack.com/api/users.info?token=' + settings.tokens[referrer_domain] + '&user=' + strUserid;
+        var url = 'https://slack.com/api/users.info?token=' + settings.tokens[source] + '&user=' + strUserid;
 
         https.get(url, function(res) {
           var body = '';
