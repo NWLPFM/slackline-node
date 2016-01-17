@@ -15,6 +15,7 @@ var https   = require('https');
 var querystring = require('querystring');
 var request   = require('request');
 var crypto    = require('crypto');
+var url       = require('url');
 
 // create an instance of express
 var app = express();
@@ -49,8 +50,8 @@ router.all('/bridge', function(req, res) {
     res.end('Message forwarded!');
     return;
   } else {
-    getHash(userid, target_domain, function(err, email_hash){
-      fixMentions(text, target_domain, function(err, cleanText){
+    getHash(userid, target, function(err, email_hash) {
+      fixMentions(text, target, function(err, cleanText) {
         sendPost(email_hash, username, cleanText, target);
       });
     });
@@ -77,7 +78,7 @@ console.log('slackline is running on port ' + port);
 var mentionMap = {};
 
 // takes a raw Slack message as an input, returns a cleaned string with any @ mentions converted to the relevant usernames
-function fixMentions(text, target_domain, next){
+function fixMentions(text, target, next){
   var strText = text;
   var userPattern = /<@([^>]+)>/igm;
   var userArray = strText.match(userPattern);
@@ -96,7 +97,7 @@ function fixMentions(text, target_domain, next){
         var strUserid = strUseridRaw.substring(2, strUseridRaw.length -1);
 
         // get the sender's domain from settings.js
-        var referrer_domain = settings.domainReferrer[target_domain];
+        var referrer = settings.domainReferrer[target];
 
         // use the sender's domain and userid to grab their user info from the Slack API
         var url = 'https://slack.com/api/users.info?token=' + settings.tokens[referrer_domain] + '&user=' + strUserid;
@@ -134,7 +135,9 @@ var emailMap = {};
 
 // calculate a hash of a user's email address based on userid. if that userid already exists in the cache, use the cached value.
 // pass hash to the callback
-function getHash(userid, target_domain, next) {
+function getHash(userid, target, next) {
+
+  var target_domain = url.parse(target).host;
 
   if (emailMap[userid]) {
     var email_hash = emailMap[userid];
@@ -144,9 +147,9 @@ function getHash(userid, target_domain, next) {
     var referrer_domain = settings.domainReferrer[target_domain];
 
     // use the sender's domain and userid to grab their user info from the Slack API
-    var url = 'https://slack.com/api/users.info?token=' + settings.tokens[referrer_domain] + '&user=' + userid;
+    var apiurl = 'https://slack.com/api/users.info?token=' + settings.tokens[referrer] + '&user=' + userid;
 
-    https.get(url, function(res) {
+    https.get(apiurl, function(res) {
       var body = '';
 
       res.on('data', function(chunk) {
