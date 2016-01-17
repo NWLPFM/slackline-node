@@ -180,9 +180,7 @@ function sendPost(email_hash, username, text, target) {
   };
 
   request(options, function(error, response, body) {
-    if(!error && response.statusCode == 200) {
-      console.log('Success!');
-    } else {
+    if(error || response.statusCode != 200) {
       console.log(error, response, body);
     }
   });
