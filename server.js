@@ -54,7 +54,7 @@ router.all('/bridge', function(req, res) {
     getHash(userid, source_domain, target, function(err, email_hash) {
       console.log("Got hash of user", userid, 'from', source_domain, 'hash is', email_hash);
       fixMentions(text, target, function(err, cleanText) {
-        console.log("Fixed mentions on ", text, "to", cleanText);
+        console.log("Fixed mentions on", text, "to", cleanText);
         sendPost(email_hash, username, cleanText, target);
       });
     });
@@ -174,7 +174,8 @@ function sendPost(email_hash, username, text, target) {
   var options = {
     uri: target,
     method: 'POST',
-    json: {
+    json: true,
+    body: {
       'username' : username,
       'text' : text,
       'icon_url' : 'http://www.gravatar.com/avatar/' + email_hash
