@@ -53,11 +53,11 @@ router.all('/bridge', function(req, res) {
     res.end('Message forwarded!');
     return;
   } else {
-    getHash(userid, source_domain, target, function(err, email_hash) {
-      console.log("Got hash of user", userid, 'from', source_domain, 'hash is', email_hash);
+    getIcon(userid, source_domain, target, function(err, icon_url) {
+      console.log("icon for user ", userid, 'from', source_domain, 'is', icon_url);
       fixMentions(text, source_domain, target, function(err, cleanText) {
         console.log("Fixed mentions on", text, "to", cleanText);
-        sendPost(email_hash, username, cleanText, target);
+        sendPost(icon_url, username, cleanText, target);
       });
     });
 
@@ -133,17 +133,15 @@ function fixMentions(text, source, target, next){
 
 
 // cache of hashed email addresses, used for Gravatar URLs
-var emailMap = {};
+var icon_map = {};
 
-// calculate a hash of a user's email address based on userid. if that userid already exists in the cache, use the cached value.
-// pass hash to the callback
-function getHash(userid, source_domain, target, next) {
+function getIcon(userid, source_domain, target, next) {
 
   var target_domain = url.parse(target).host;
 
-  if (emailMap[userid]) {
-    var email_hash = emailMap[userid];
-    next(null, email_hash);
+  if (icon_map[userid]) {
+    var icon_url = icon_map[userid];
+    next(null, icon_url);
   } else {
     // use the sender's domain and userid to grab their user info from the Slack API
     var apiurl = 'https://slack.com/api/users.info?token=' + settings.tokens[source_domain] + '&user=' + userid;
@@ -157,9 +155,9 @@ function getHash(userid, source_domain, target, next) {
 
       res.on('end', function() {
         var userResponse = JSON.parse(body);
-        var email_hash = crypto.createHash('md5').update(userResponse.user.profile.email).digest('hex');
-        emailMap[userid] = email_hash;
-        next(null, email_hash);
+        var icon_url = userResponse.user.profile.image_192;
+        icon_map[userid] = icon_url;
+        next(null, icon_url);
       });
     }).on('error', function(e) {
       console.log('Got error: ' + e);
