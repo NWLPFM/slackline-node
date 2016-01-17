@@ -170,7 +170,8 @@ function sendPost(icon_url, username, text, target) {
     body: {
       'username' : username,
       'text' : text,
-      'icon_url' : icon_url
+      'icon_url' : icon_url,
+      'parse': 'link_names=1'
     }
   };
 
