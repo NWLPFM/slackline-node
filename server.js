@@ -144,9 +144,6 @@ function getHash(userid, source_domain, target, next) {
     var email_hash = emailMap[userid];
     next(null, email_hash);
   } else {
-    // get the sender's domain from settings.js
-    var referrer_domain = settings.domainReferrer[target_domain];
-
     // use the sender's domain and userid to grab their user info from the Slack API
     var apiurl = 'https://slack.com/api/users.info?token=' + settings.tokens[source_domain] + '&user=' + userid;
 
