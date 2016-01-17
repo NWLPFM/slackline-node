@@ -186,7 +186,7 @@ function sendPost(email_hash, username, text, target) {
     if(!error && response.statusCode == 200) {
       console.log('Success!');
     } else {
-      console.log(response);
+      console.log(response, body);
     }
   });
 }
