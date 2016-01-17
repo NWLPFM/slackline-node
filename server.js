@@ -41,6 +41,7 @@ router.get('/', function(req, res) {
 router.all('/bridge', function(req, res) {
   var username = req.body.user_name;
   var userid = req.body.user_id;
+  var source_domain = req.body.team_domain;
   var text = req.body.text;
   var target = req.query.target;
 
@@ -50,7 +51,7 @@ router.all('/bridge', function(req, res) {
     res.end('Message forwarded!');
     return;
   } else {
-    getHash(userid, target, function(err, email_hash) {
+    getHash(userid, source_domain, target, function(err, email_hash) {
       fixMentions(text, target, function(err, cleanText) {
         sendPost(email_hash, username, cleanText, target);
       });
@@ -135,7 +136,7 @@ var emailMap = {};
 
 // calculate a hash of a user's email address based on userid. if that userid already exists in the cache, use the cached value.
 // pass hash to the callback
-function getHash(userid, target, next) {
+function getHash(userid, source_domain, target, next) {
 
   var target_domain = url.parse(target).host;
 
@@ -147,7 +148,7 @@ function getHash(userid, target, next) {
     var referrer_domain = settings.domainReferrer[target_domain];
 
     // use the sender's domain and userid to grab their user info from the Slack API
-    var apiurl = 'https://slack.com/api/users.info?token=' + settings.tokens[referrer] + '&user=' + userid;
+    var apiurl = 'https://slack.com/api/users.info?token=' + settings.tokens[source_domain] + '&user=' + userid;
 
     https.get(apiurl, function(res) {
       var body = '';
