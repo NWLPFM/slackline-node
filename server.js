@@ -52,6 +52,7 @@ router.all('/bridge', function(req, res) {
     return;
   } else {
     getHash(userid, source_domain, target, function(err, email_hash) {
+      console.log("Got hash of user", userid, 'from', source_domain, 'hash is', email_hash);
       fixMentions(text, target, function(err, cleanText) {
         sendPost(email_hash, username, cleanText, target);
       });
