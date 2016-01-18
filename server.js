@@ -166,7 +166,7 @@ function sendToAll(icon_url, username, text, channel, source) {
     if(settings.domains.hasOwnProperty(domain) && settings.domains[domain].webhook && domain != source) {
       var target_channel = channel;
       if(settings.channel_map && settings.channel_map[channel] && settings.channel_map[channel][domain]) {
-        target_channel = settings.channel_map[channel_map][domain];
+        target_channel = settings.channel_map[channel][domain];
       }
       sendPost(icon_url, username, text, target_channel, settings.domains[domain].webhook);
     }
