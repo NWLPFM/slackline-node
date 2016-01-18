@@ -44,7 +44,7 @@ router.get('/reload', function(req, res) {
     settings = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'settings.json'), 'utf-8'));
     res.json({success: true});
   } catch(e) {
-    res.error(500).json({success: false, stack: e.stack});
+    res.status(500).json({success: false, stack: e.stack});
   }
 });
 
