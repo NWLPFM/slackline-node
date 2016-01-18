@@ -33,3 +33,35 @@ Next, copy `settings.example.json` to `settings.json` and fill it out. You will 
 
 ## Run slackline
 It is recommended that you configure slackline as a system service. A sample systemd service file is provided, although you may need to adapt it to your needs or write something entirely different if you do not use systemd. When it is running, it will serve up a message about successful configuration on `/`.
+
+For security reasons, it is recommended that you place a front-end proxy, such as nginx, in front of slackline-node and have it do SSL termination.
+
+
+# Extra Goodies
+
+## Non-uniform channel names
+In general, we assume the bridged channels are all named the identically across Slacks. However, sometimes that's not the case. For this, we have `channel_map`. If you have a channel, lets say it's called `#awesomechannel` on most of the Slacks that it's bridged with, but one Slack, say `radteam.slack.com` really wants to call it `#radchannel`, update `settings.json` like such:
+
+```json
+{
+  "domains": {
+    // blah blah blah same configuration as above
+  }
+  "channel_map": {
+    "awesomechannel": {
+      "radteam": "radchannel"
+    }
+  }
+}
+```
+
+and update the outgoing webhook for that team's channel to include `channel=awesomechannel` in the query string, so it might look like `https://slackline.example.org/bridge?channel=awesomechannel`. That's it! When setting outgoing webhook tokens, use the team-specific channel name, as that is checked before the channel mapping is.
+
+
+## Reloading config
+The `/reload` endpoint will re-read the `settings.json` file. If reading or parsing of the file fails, the original settings will be kept in place and the details of the failure will be returned to the requester.
+
+```
+$ curl https://slackline.example.org/reload
+{"success":true}
+```
