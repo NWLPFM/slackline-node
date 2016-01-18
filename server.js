@@ -181,7 +181,7 @@ function sendPost(icon_url, username, text, channel, target) {
     method: 'POST',
     json: true,
     body: {
-      'channel': channel,
+      'channel': "#" + channel,
       'username': username,
       'text': text,
       'icon_url': icon_url
