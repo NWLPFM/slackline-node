@@ -15,6 +15,8 @@ var https   = require('https');
 var querystring = require('querystring');
 var request   = require('request');
 var url       = require('url');
+var fs = require('fs');
+var path = require('path');
 
 // create an instance of express
 var app = express();
@@ -39,7 +41,7 @@ router.get('/', function(req, res) {
 
 router.get('/reload', function(req, res) {
   try {
-    settings = require('./settings.json');
+    settings = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'settings.json'), 'utf-8'));
     res.json({success: true});
   } catch(e) {
     res.error(500).json({success: false, stack: e.stack});
