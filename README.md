@@ -22,7 +22,7 @@ For each slack you wish to bridge, you will need to do the following:
 * Create or retrieve your Slack Web API token. Until we figure out Slack's crazy new API stuff, we're just using personal tokens. You can pick yours up at [the bottom of this page](https://api.slack.com/web).
 
 ## Configure Slackline
-Next, copy `settings.example.js` to `settings.js` and fill it out. You will need a couple of things:
+Next, copy `settings.example.json` to `settings.json` and fill it out. You will need a couple of things:
 
 * `settings.domains` is a dict. Each item's key is the slack domain (eg for `awesomeorg.slack.com` you would put `awesomeorg`). The value is another dict with two keys:
  * `key` should be a Slack web API key for that domain.

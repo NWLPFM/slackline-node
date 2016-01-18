@@ -7,7 +7,7 @@
 // ========================================================================================
 
 // required modules
-var settings  = require ('./settings');
+var settings  = require('./settings.json');
 var express   = require('express');
 var bodyParser  = require('body-parser');
 var http    = require('http');
@@ -39,7 +39,7 @@ router.get('/', function(req, res) {
 
 router.get('/reload', function(req, res) {
   try {
-    settings = require('./settings');
+    settings = require('./settings.json');
     res.json({success: true});
   } catch(e) {
     res.error(500).json({success: false, stack: e.stack});

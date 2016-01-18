@@ -1,0 +1,20 @@
+{
+  "domains": {
+    "domain1": {
+      "key": "asdfasdf",
+      "webhook": "http://hooks.slack.com/...",
+      "tokens": {
+        "channel1": "zdjfas",
+        "channel2": "iasdfaasdf"
+        }
+      },
+    "domain2": {
+      "key": "asdfas43",
+      "webhook": "http://hooks.slack.com/...",
+      "tokens": {
+        "channel1": "asdfasd",
+        "channel2": "ijasdif"
+        }
+      }
+    }
+  }
