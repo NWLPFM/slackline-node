@@ -37,6 +37,15 @@ router.get('/', function(req, res) {
   res.json({ message: 'hooray! welcome to slackline!' });
 });
 
+router.get('/reload', function(req, res) {
+  try {
+    settings = require('./settings');
+    res.json({success: true});
+  } catch(e) {
+    res.error(500).json({success: false, stack: e.stack});
+  }
+});
+
 router.all('/bridge', function(req, res) {
   var username = req.body.user_name;
   var userid = req.body.user_id;
