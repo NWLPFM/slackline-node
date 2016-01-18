@@ -14,7 +14,6 @@ var http    = require('http');
 var https   = require('https');
 var querystring = require('querystring');
 var request   = require('request');
-var crypto    = require('crypto');
 var url       = require('url');
 
 // create an instance of express
@@ -42,6 +41,7 @@ router.all('/bridge', function(req, res) {
   var username = req.body.user_name;
   var userid = req.body.user_id;
   var source_domain = req.body.team_domain;
+  var channel = req.query.channel || req.body.channel_name;
   var text = req.body.text;
   var target = req.query.target;
 
@@ -51,8 +51,8 @@ router.all('/bridge', function(req, res) {
     return;
   } else {
     getIcon(userid, source_domain, target, function(err, icon_url) {
-      fixMentions(text, source_domain, target, function(err, cleanText) {
-        sendPost(icon_url, username, cleanText, target);
+      fixMentions(text, source_domain, function(err, cleanText) {
+        sendToAll(icon_url, username, cleanText, source_domain);
       });
     });
 
@@ -78,7 +78,7 @@ console.log('slackline is running on port ' + port);
 var mentionMap = {};
 
 // takes a raw Slack message as an input, returns a cleaned string with any @ mentions converted to the relevant usernames
-function fixMentions(text, source, target, next){
+function fixMentions(text, source, next){
   var strText = text;
   var userPattern = /<@([^>]+)>/igm;
   var userArray = strText.match(userPattern);
@@ -97,7 +97,7 @@ function fixMentions(text, source, target, next){
         var strUserid = strUseridRaw.substring(2, strUseridRaw.length -1);
 
         // use the sender's domain and userid to grab their user info from the Slack API
-        var url = 'https://slack.com/api/users.info?token=' + settings.tokens[source] + '&user=' + strUserid;
+        var url = 'https://slack.com/api/users.info?token=' + settings.domains[source].key + '&user=' + strUserid;
 
         https.get(url, function(res) {
           var body = '';
@@ -130,7 +130,7 @@ function fixMentions(text, source, target, next){
 // cache of hashed email addresses, used for Gravatar URLs
 var icon_map = {};
 
-function getIcon(userid, source_domain, target, next) {
+function getIcon(userid, source, target, next) {
 
   var target_domain = url.parse(target).host;
 
@@ -139,7 +139,7 @@ function getIcon(userid, source_domain, target, next) {
     next(null, icon_url);
   } else {
     // use the sender's domain and userid to grab their user info from the Slack API
-    var apiurl = 'https://slack.com/api/users.info?token=' + settings.tokens[source_domain] + '&user=' + userid;
+    var apiurl = 'https://slack.com/api/users.info?token=' + settings.domains[source].key + '&user=' + userid;
 
     https.get(apiurl, function(res) {
       var body = '';
@@ -160,18 +160,30 @@ function getIcon(userid, source_domain, target, next) {
   }
 }
 
+function sendToAll(icon_url, username, text, channel, source) {
+  for(var domain in settings.domains) {
+    if(settings.domains.hasOwnProperty(domain) && settings.domains[domain].webhook && domain != source) {
+      var target_channel = channel;
+      if(settings.channel_map && settings.channel_map[channel] && settings.channel_map[channel][domain]) {
+        target_channel = settings.channel_map[channel_map][domain];
+      }
+      sendPost(icon_url, username, text, target_channel, settings.domains[domain].webhook);
+    }
+  }
+}
+
 
 // Send the forwarded message as a POST to the target Slack instance
-function sendPost(icon_url, username, text, target) {
+function sendPost(icon_url, username, text, channel, target) {
   var options = {
     uri: target,
     method: 'POST',
     json: true,
     body: {
-      'username' : username,
-      'text' : text,
-      'icon_url' : icon_url,
-      'parse': 'link_names=1'
+      'channel': channel,
+      'username': username,
+      'text': text,
+      'icon_url': icon_url
     }
   };
 
