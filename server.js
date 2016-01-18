@@ -188,8 +188,11 @@ function sendPost(icon_url, username, text, channel, target) {
   };
 
   request(options, function(error, response, body) {
-    if(error || response.statusCode != 200) {
-      console.log(error, response, body);
+    if(error) {
+      console.log("Error posting message to channel", channel, "on", target, "Error stack:\n", error.stack);
+    }
+    if(response.statusCode != 200) {
+      console.log("Bad response from Slack when attempting to post to channel", channel, "on", target,  body);
     }
   });
 }
