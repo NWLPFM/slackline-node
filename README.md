@@ -5,6 +5,8 @@ A Node.js implementation of [Slackline](https://github.com/ernesto-jimenez/slack
 
 Slackline is a web hook bridge that allows you to mirror channels across Slack teams.
 
+# Standard setup
+
 ## Install
 Get the code, run `npm install`:
 ```
