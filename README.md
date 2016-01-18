@@ -27,7 +27,7 @@ Next, copy `settings.example.js` to `settings.js` and fill it out. You will need
 * `settings.domains` is a dict. Each item's key is the slack domain (eg for `awesomeorg.slack.com` you would put `awesomeorg`). The value is another dict with two keys:
  * `key` should be a Slack web API key for that domain.
  * `webhook` is the incoming webhook URL for that domain's Slack.
- * `token`, used to verify that the request came from an Slack. This was provided when you created the outgoing web hook. It should be a dict in `channel: token` format.
+ * `tokens`, used to verify that the request came from an Slack. This was provided when you created the outgoing web hook. It should be a dict in `channel: token` format.
 
 **TODO**: Describe how `settings.channel_map` works
 

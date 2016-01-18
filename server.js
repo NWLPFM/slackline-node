@@ -49,7 +49,7 @@ router.all('/bridge', function(req, res) {
   if (username == "slackbot") {
     res.end('Message forwarded!');
     return;
-  } else {
+  } else if(checkToken(req.body)) {
     getIcon(userid, source_domain, target, function(err, icon_url) {
       fixMentions(text, source_domain, function(err, cleanText) {
         // sendToAll(icon_url, username, cleanText, source_domain);
@@ -191,9 +191,45 @@ function sendPost(icon_url, username, text, channel, target) {
   request(options, function(error, response, body) {
     if(error) {
       console.log("Error posting message to channel", channel, "on", target, "Error stack:\n", error.stack);
-    }
-    if(response.statusCode != 200) {
+    } else if(response.statusCode != 200) {
       console.log("Bad response from Slack when attempting to post to channel", channel, "on", target,  body);
     }
   });
+}
+
+function checkToken(requestbody) {
+  if(!requestbody) {
+    console.log("Received empty request body. Probably not from Slack (or they changed their APIs significantly)");
+    return false;
+  }
+  var domain = requestbody.team_domain;
+  var channel = requestbody.channel_name;
+  var token = requestbody.token;
+  if(!domain || !channel || !token) {
+    console.log("Request does not have channel, domain and/or token in the body. Maybe Slack changed up their APIs? Here's the full request body:", requestbody);
+    console.log("Hint: You should probably update slackline-node, or if you are up to date, file an issue");
+    return false;
+  }
+  if(!settings.domains) {
+    console.log("settings.domains not set! Please configure slackline before using it!");
+    return false;
+  }
+  if(!settings.domains[domain]) {
+    console.log("Received a request for domain", domain, "but settings.domains has no item with that key!");
+    return false;
+  }
+  if(!settings.domains[domain].tokens) {
+    console.log("No tokens configured for domain", domain, ", cannot validate message");
+    return false;
+  }
+  if(!settings.domains[domain].tokens[channel]) {
+    console.log("No tokens configured for channel", channel, "on domain", domain, ", cannot validate message!");
+    return false;
+  }
+  if(settings.domains[domain].tokens[channel] == token) {
+    return true;
+  } else {
+    console.log("Received incorrect token for message from channel", channel, "on domain", domain, ", refusing to pass message on!");
+    return false;
+  }
 }
