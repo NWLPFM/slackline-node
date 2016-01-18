@@ -52,7 +52,8 @@ router.all('/bridge', function(req, res) {
   } else {
     getIcon(userid, source_domain, target, function(err, icon_url) {
       fixMentions(text, source_domain, function(err, cleanText) {
-        sendToAll(icon_url, username, cleanText, source_domain);
+        // sendToAll(icon_url, username, cleanText, source_domain);
+        sendToAll(icon_url, username, cleanText, channel, source_domain);
       });
     });
 
