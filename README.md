@@ -47,8 +47,8 @@ In general, we assume the bridged channels are all named the identically across 
 ```json
 {
   "domains": {
-    // blah blah blah same configuration as above
-  }
+    "usual_stuff": "see_above_for_proper_domain_configuration"
+  },
   "channel_map": {
     "awesomechannel": {
       "radteam": "radchannel"
