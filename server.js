@@ -8,7 +8,7 @@
 
 // required modules
 var settings  = require('./settings.json');
-var raven = new require('raven').Client(settings.sentryDSN);
+var raven = new require('raven');
 var express   = require('express');
 var bodyParser  = require('body-parser');
 var http    = require('http');
