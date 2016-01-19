@@ -23,7 +23,7 @@ var exphbs = require('express-handlebars');
 var app = express();
 
 // Configure the templating engine
-app.engine('handlebars', exphbs());
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'handlebars');
 app.use(express.static(path.resolve(__dirname, 'static')));

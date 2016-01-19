@@ -1,32 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags always come first -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-  </head>
-  <body>
-    <div class="container">
-      <div class="jumbotron">
-        <h1 class="display-3">Join the {{ settings.name }} shared Slack channel!</h1>
-        <p class="lead">To join our shared channel(s) to your organization, there are a few things you need to do.</p>
-        <p>Note that several steps involve creating or finding certain keys that allow us to access
-          your Slack. Write them down somewhere and send them to whoever runs this at the end. Also
-          note that you probably try to not share these with anyone else.</p>
-        <ol>
-          <li /> Create the channel(s) on your own Slack. You can do this by typing <code>/open #channel</code>,
-          substituting <code>#channel</code> for the name of the channel. Fill in the purpose if you wish, and click the "Create channel" button. The person who referred you here can tell you the channel names you will need.
-          <li /> Create an incoming webhook for your Slack organization. Go <a href="https://{{ slackdomain }}.slack.com/services/new/incoming-webhook" target="_blank">here</a>, select one of your newly created channels, and click the big green <i>Add Incoming WebHook integration</i> button. Scroll down to the "Webhook URL" part, and copy it down somewhere. You only need to do this once per Slack (even if there are multiple channels)
-          <li /> Create an outgoing webhook for <b>every channel you are joining</b>. Do that by clicking <a href="https://{{ slackdomain }}.slack.com/services/new/outgoing-webhook" target="_blank">here</a>, clicking the big green <i>Add Outgoing WebHook integration</i>. Set the channel to the shared channel, leave <i>Trigger Word(s)</i> blank, and set <i>URL(s)</i> to <code>{{ urlbase }}/bridge</code>. Write down the token at the bottom and which channel it came from.
-          <li />Create a Slack Web API token by going <a href="https://api.slack.com/web" target="_blank">here</a>. Scroll down to the bottom, select "Create Token" by your team (all of the teams you're signed into will be show, be sure to create it for the team you are trying to bridge in). It will ask you to confirm your Slack password for that team, then send you back to the token page where you must once again click "Confirm". Once the token has been issued, write it down.
-          <li />Finally, send all of these crazy tokens and links to the person who runs this slackline instance. Probably whoever sent you this link. Once they add them to the proper location, you'll be all set.
-        </ol>
-        </ul>
-      </div>
-    </div>
-  </body>
-</html>
+<div class="jumbotron">
+  <h1 class="display-3">Join the {{ settings.name }} shared Slack channel!</h1>
+  <p class="lead">To join our shared channel(s) to your organization, there are a few things you need to do.</p>
+  <p>Note that several steps involve creating or finding certain keys that allow us to access
+    your Slack. Write them down somewhere and send them to whoever runs this at the end. Also
+    note that you probably try to not share these with anyone else.</p>
+  <ol>
+    <li /> Create the channel(s) on your own Slack. You can do this by typing <code>/open #channel</code>,
+    substituting <code>#channel</code> for the name of the channel. Fill in the purpose if you wish, and click the "Create channel" button. The person who referred you here can tell you the channel names you will need.
+    <li /> Create an incoming webhook for your Slack organization. Go <a href="https://{{ slackdomain }}.slack.com/services/new/incoming-webhook" target="_blank">here</a>, select one of your newly created channels, and click the big green <i>Add Incoming WebHook integration</i> button. Scroll down to the "Webhook URL" part, and copy it down somewhere. You only need to do this once per Slack (even if there are multiple channels)
+    <li /> Create an outgoing webhook for <b>every channel you are joining</b>. Do that by clicking <a href="https://{{ slackdomain }}.slack.com/services/new/outgoing-webhook" target="_blank">here</a>, clicking the big green <i>Add Outgoing WebHook integration</i>. Set the channel to the shared channel, leave <i>Trigger Word(s)</i> blank, and set <i>URL(s)</i> to <code>{{ urlbase }}/bridge</code>. Write down the token at the bottom and which channel it came from.
+    <li />Create a Slack Web API token by going <a href="https://api.slack.com/web" target="_blank">here</a>. Scroll down to the bottom, select "Create Token" by your team (all of the teams you're signed into will be show, be sure to create it for the team you are trying to bridge in). It will ask you to confirm your Slack password for that team, then send you back to the token page where you must once again click "Confirm". Once the token has been issued, write it down.
+    <li />Finally, send all of these crazy tokens and links to the person who runs this slackline instance. Probably whoever sent you this link. Once they add them to the proper location, you'll be all set.
+  </ol>
+  </ul>
+</div>
