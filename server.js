@@ -156,7 +156,7 @@ function fixMentions(text, source, next){
 // cache of hashed email addresses, used for Gravatar URLs
 var icon_map = {};
 
-function getIcon(userid, source, target, next) {
+function getIcon(userid, source, next) {
 
   if (icon_map[userid]) {
     var icon_url = icon_map[userid];
