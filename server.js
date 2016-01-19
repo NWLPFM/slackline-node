@@ -8,6 +8,7 @@
 
 // required modules
 var settings  = require('./settings.json');
+var raven = new require('raven').Client(settings.sentryDSN);
 var express   = require('express');
 var bodyParser  = require('body-parser');
 var http    = require('http');
@@ -21,6 +22,10 @@ var exphbs = require('express-handlebars');
 
 // create an instance of express
 var app = express();
+
+// Catch errors
+app.use(raven.middleware.express.requestHandler(settings.sentryDSN));
+app.use(raven.middleware.express.errorHandler(settings.sentryDSN));
 
 // Configure the templating engine
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
@@ -90,7 +95,6 @@ router.all('/bridge', function(req, res) {
 });
 
 app.use(router);
-
 
 // START THE SERVER
 // ========================================================================================
