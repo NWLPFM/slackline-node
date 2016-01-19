@@ -84,6 +84,8 @@ router.all('/bridge', function(req, res) {
 
     // TO DO: only fire success message when sendPost actually finishes (via a callback)
     res.end('Message forwarded!');
+  } else {
+    res.status(400).json({ success: false, message: "Improper request body sent!"});
   }
 });
 
