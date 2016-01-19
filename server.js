@@ -17,9 +17,15 @@ var request   = require('request');
 var url       = require('url');
 var fs = require('fs');
 var path = require('path');
+var exphbs = require('express-handlebars');
 
 // create an instance of express
 var app = express();
+
+// Configure the templating engine
+app.engine('handlebars', exphbs());
+app.set('views', path.resolve(__dirname, 'views'));
+app.set('view engine', 'handlebars');
 
 // configure the app to use bodyParser()
 // this will allow us to interpret the data from a POST
@@ -34,9 +40,17 @@ var port = process.env.PORT || 8080;
 
 var router = express.Router();
 
-// test route to make sure everything is working
 router.get('/', function(req, res) {
-  res.json({ message: 'hooray! welcome to slackline!' });
+  res.json({ message: "hooray! welcome to slackline!0 "});
+});
+
+router.get('/setup', function(req, res) {
+  var urlbase = settings.uribase || url.format({
+    protocol: req.protocol,
+    host: req.hostname,
+    port: port
+  });
+  res.render('index', {settings: settings, urlbase: urlbase, slackdomain: "www"});
 });
 
 router.get('/reload', function(req, res) {
