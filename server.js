@@ -112,47 +112,51 @@ var mentionMap = {};
 // takes a raw Slack message as an input, returns a cleaned string with any @ mentions converted to the relevant usernames
 function fixMentions(text, source, next){
   var strText = text;
-  var userPattern = /<@([^>]+)>/igm;
-  var userArray = strText.match(userPattern);
+  if(text) {
+    var userPattern = /<@([^>]+)>/igm;
+    var userArray = strText.match(userPattern);
 
-  if (userArray) {
-    var counter = 0;
+    if (userArray) {
+      var counter = 0;
 
-    userArray.forEach(function(strUseridRaw){
-      if (mentionMap[strUseridRaw]) {
-        strText = strText.replace(strUseridRaw, '@' + mentionMap[strUseridRaw]);
-        counter += 1;
-        if (counter == (userArray.length)) {
-          next(null, strText);
+      userArray.forEach(function(strUseridRaw){
+        if (mentionMap[strUseridRaw]) {
+          strText = strText.replace(strUseridRaw, '@' + mentionMap[strUseridRaw]);
+          counter += 1;
+          if (counter == (userArray.length)) {
+            next(null, strText);
+          }
+        } else {
+          var strUserid = strUseridRaw.substring(2, strUseridRaw.length -1);
+
+          // use the sender's domain and userid to grab their user info from the Slack API
+          var url = 'https://slack.com/api/users.info?token=' + settings.domains[source].key + '&user=' + strUserid;
+
+          https.get(url, function(res) {
+            var body = '';
+
+            res.on('data', function(chunk) {
+              body += chunk;
+            });
+
+            res.on('end', function() {
+              var userResponse = JSON.parse(body);
+              var username = userResponse.user.name;
+              mentionMap[strUseridRaw] = username;
+              strText = strText.replace(strUseridRaw, '@' + username);
+              counter += 1;
+              if (counter == (userArray.length)) {
+                next(null, strText);
+              }
+            });
+          }).on('error', function(e) {
+            console.log('Got error: ' + e);
+          });
         }
-      } else {
-        var strUserid = strUseridRaw.substring(2, strUseridRaw.length -1);
-
-        // use the sender's domain and userid to grab their user info from the Slack API
-        var url = 'https://slack.com/api/users.info?token=' + settings.domains[source].key + '&user=' + strUserid;
-
-        https.get(url, function(res) {
-          var body = '';
-
-          res.on('data', function(chunk) {
-            body += chunk;
-          });
-
-          res.on('end', function() {
-            var userResponse = JSON.parse(body);
-            var username = userResponse.user.name;
-            mentionMap[strUseridRaw] = username;
-            strText = strText.replace(strUseridRaw, '@' + username);
-            counter += 1;
-            if (counter == (userArray.length)) {
-              next(null, strText);
-            }
-          });
-        }).on('error', function(e) {
-          console.log('Got error: ' + e);
-        });
-      }
-    });
+      });
+    } else {
+      next(null, text);
+    }
   } else {
     next(null, text);
   }
