@@ -26,6 +26,7 @@ var app = express();
 app.engine('handlebars', exphbs());
 app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'handlebars');
+app.use(express.static(path.resolve(__dirname, 'static')));
 
 // configure the app to use bodyParser()
 // this will allow us to interpret the data from a POST

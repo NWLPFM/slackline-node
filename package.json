@@ -3,11 +3,14 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "postinstall": "mkdir static; cp -r node_modules/bootstrap/dist/* static/"
   },
   "dependencies": {
     "body-parser": "~1.0.1",
+    "bootstrap": "^3.3.6",
     "express": "~4.0.0",
+    "express-handlebars": "^2.0.1",
     "request": "^2.67.0"
   }
 }
